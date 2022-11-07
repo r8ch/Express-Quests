@@ -60,7 +60,7 @@ const getMovieById = (req, res) => {
 
 const postMovie = (request, response) => {
   const { title, director, year, color, duration } = request.body;
-  console.log(request.body);
+
   database
     .query(
       "INSERT INTO movies (title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
@@ -76,8 +76,32 @@ const postMovie = (request, response) => {
     });
 };
 
+const insertMovie = (request, response) => {
+  const id = parseInt(request.params.id);
+
+  const { title, director, year, color, duration } = request.body;
+
+  database
+    .query(
+      "update movies set title = ?, director = ?, year = ?, color = ?, duration = ? where id = ?",
+      [title, director, year, color, duration, id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        response.status(404).send("Not Found");
+      } else {
+        response.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      response.status(500).send("Error");
+    });
+};
+
 module.exports = {
   getMovies,
   getMovieById,
   postMovie,
+  insertMovie,
 };

@@ -46,9 +46,30 @@ const postUser = (request, response) => {
       response.status(500).send("Error saving the user");
     });
 };
+const updateUser = (request, response) => {
+  const id = parseInt(request.params.id);
 
+  const { firstname, lastname, email, city, language } = request.body;
+
+  database.query(
+    "UPDATE users SET firstname = ?, lastname = ?, email = ?, city = ?, language = ? WHERE id = ?",
+    [firstname, lastname, email, city, language, id]
+      .then(([result]) => {
+        if (result.affectedRows === 0) {
+          response.status(404).send("Not Found");
+        } else {
+          response.sendStatus(204);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        response.status(500).send("Error");
+      })
+  );
+};
 module.exports = {
   getUsers,
   getUsersById,
   postUser,
+  updateUser,
 };

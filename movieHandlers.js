@@ -98,10 +98,27 @@ const insertMovie = (request, response) => {
       response.status(500).send("Error");
     });
 };
+const deleteMovie = (request, response) => {
+  const id = parseInt(request.params.id);
 
+  database
+    .query("DELETE FROM movies WHERE id = ?", [id])
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        response.status(404).send("Not Found");
+      } else {
+        response.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      response.status(500).send("Error");
+    });
+};
 module.exports = {
   getMovies,
   getMovieById,
   postMovie,
   insertMovie,
+  deleteMovie,
 };

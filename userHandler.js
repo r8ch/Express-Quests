@@ -2,8 +2,32 @@ const { response } = require("express");
 const database = require("./database");
 
 const getUsers = (request, response) => {
-  database
+  //Past challenges
+  /* database
     .query("select * from users")
+    .then(([users]) => {
+      response.json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      response.status(500).send("Error retrieving data from database");
+    }); */
+
+  //Current chalenge: Express 6- GET in detail
+  let sql = "select * from users";
+  const sqlValues = [];
+
+  if (request.query.language != null) {
+    sql += " where language = ?";
+    sqlValues.push(request.query.language);
+  }
+  if (request.query.city != null) {
+    sql += " where city = ?";
+    sqlValues.push(request.query.city);
+  }
+
+  database
+    .query(sql, sqlValues)
     .then(([users]) => {
       response.json(users);
     })
